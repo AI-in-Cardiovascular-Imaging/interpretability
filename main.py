@@ -17,12 +17,12 @@ def main(config: DictConfig) -> None:
 
    for dir in subdirs:
       logger.info(f'Processing {dir}')
-      train = pd.read_csv(os.path.join(dir, 'train_feature.csv'))
-      test = pd.read_csv(os.path.join(dir, 'test_feature.csv'))
+      train = pd.read_csv(os.path.join(dir, 'train_feature.csv'), index_col=0)
+      test = pd.read_csv(os.path.join(dir, 'test_feature.csv'), index_col=0)
       with open(os.path.join(dir, 'model.pickle'), 'rb') as f:
          model = pickle.load(f)
 
-      interpreter(train, test, model)
+      interpreter(dir, train, test, model)
 
 
 if __name__ == '__main__':
