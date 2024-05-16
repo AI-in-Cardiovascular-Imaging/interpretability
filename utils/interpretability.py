@@ -3,7 +3,6 @@ import shap
 import matplotlib.pyplot as plt
 
 from loguru import logger
-from alibi.explainers import KernelShap
 
 
 class Interpretability:
@@ -16,8 +15,9 @@ class Interpretability:
         y_test = test['label']
         x_test = test.drop(columns=['label'])
 
-        x_train = shap.sample(x_train, nsamples=400)
-        x_test = shap.sample(x_test, nsamples=400)
+        # sample dataset for faster runtimes
+        x_train = shap.sample(x_train, nsamples=50)
+        x_test = shap.sample(x_test, nsamples=50)
 
         pred_function = model.predict_proba
         explainer = shap.KernelExplainer(lambda x: pred_function(x)[:, 1], x_train)
