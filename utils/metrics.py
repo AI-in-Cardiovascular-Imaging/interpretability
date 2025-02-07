@@ -1,5 +1,5 @@
 from sklearn.metrics import (roc_auc_score, precision_recall_fscore_support, confusion_matrix, accuracy_score,
-                             average_precision_score, ConfusionMatrixDisplay, roc_curve)
+                             average_precision_score, roc_curve)
 import numpy as np
 
 
