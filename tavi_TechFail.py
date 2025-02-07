@@ -10,8 +10,8 @@ from os.path import join
 import warnings
 import pickle
 
+from utils.metrics import compute_metrics
 from utils.roc_comparison import delong_roc_test
-
 from utils.interpretability import Interpretability
 from utils.plot import plot_confusion_matrix
 
