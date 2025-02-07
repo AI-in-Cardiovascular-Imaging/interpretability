@@ -28,7 +28,7 @@ def main():
         fs_folders = [f.path for f in os.scandir(path) if f.is_dir()]
 
         index = pd.MultiIndex(levels=[[], []], codes=[[], []], names=["feature_selection", "model"])
-        df_metrics = pd.DataFrame(index=index, columns=['AUC', 'Sen', 'Spe', 'youden_index', 'f1-score', 'ppv',
+        df_metrics = pd.DataFrame(index=index, columns=['AUC', 'Sen', 'Spe', 'youden_index', 'f1-score', 'ppv', 'npv',
                                                         'aupr', 'accuracy', 'tp', 'tn', 'fp', 'fn', 'best_test_thresh'])
 
         # Read excel with validation-based cutoffs
@@ -77,7 +77,6 @@ def main():
 
                 # Compute and plot SHAP values
                 if (outcome == "Vasc" and model == "RF") or (outcome == "Cardiac" and ((model == "RF" and feature_selection in ["KW", "Relief"]) or (model == "LR" and feature_selection == "RFE") or (model == "LDA" and feature_selection == "ANOVA"))):
-                # if outcome == "Vasc" and model == "RF" and feature_selection == "RFE":
                     # Save ROC curve for best models
                     roc_list.append(roc)
                     names_best.append(f"{feature_selection} - {model}")
@@ -102,8 +101,8 @@ def main():
         df_metrics.to_csv(join(results_folder, "metrics.csv"), index=False)
 
         # Plot heatmap with metrics
-        metrics = ["Sen", "Spe", "AUC", "accuracy", "ppv"]
-        metric_names = ["Sensitivity", "Specificity", "AUC", "Accuracy", "PPV"]
+        metrics = ["Sen", "Spe", "AUC", "accuracy", "ppv", "npv"]
+        metric_names = ["Sensitivity", "Specificity", "AUC", "Accuracy", "PPV", "NPV"]
         colors = ["Reds", "Greens", "Blues", "Purples", "Oranges", "Greys"]
         for i in range(len(metrics)):
             metric = metrics[i]
@@ -125,8 +124,8 @@ def main():
                 df_pvalue = pd.DataFrame(columns=models, index=models)
                 df_color = df_pvalue.copy().astype(float)
                 for i, model1 in enumerate(models):
+                    y_pred1 = predictions_labels[model1]
                     for model2 in models[i+1:]:
-                        y_pred1 = predictions_labels[model1]
                         y_pred2 = predictions_labels[model2]
                         p_value = 10**delong_roc_test(y_true, y_pred1, y_pred2)[0][0]
                         df_pvalue.loc[model2, model1] = np.round(p_value, decimals=2) if p_value >= 0.01 else "<0.01"
